@@ -1,0 +1,9 @@
+## Interface: 30401
+## Title: RaidSwitcherFix
+## Notes: Fixes auto switch bug for raid frames
+#DefaultState: enabled
+## SavedVariables: RaidSwitcherFixDB
+
+FixRaidTaint.lua
+config.lua
+RaidSwitcherFix.lua
