@@ -82,7 +82,7 @@ function RSF.CheckProfiles(debug)
     ----------------------------------------
     -- ANTI-SPAM
     ----------------------------------------
-    if numPlayers == lastPlayerCount and enemyType == lastEnemyType then
+    if numPlayers == lastPlayerCount and enemyType == lastEnemyType and not RSF.pendingUpdate then
         if debug then print("[RSF] No change → skip") end
         return
     end
@@ -100,6 +100,10 @@ function RSF.CheckProfiles(debug)
         if debug then print("→ Checking profile:", profile) end
 
         if ProfileMatches(profile, numPlayers, enemyType) then
+            if InCombatLockdown() then
+                RSF.pendingUpdate = true
+                return
+            end
             if GetActiveRaidProfile() ~= profile then
                 CompactUnitFrameProfiles_ActivateRaidProfile(profile)
 
@@ -141,8 +145,8 @@ ev:RegisterEvent("RAID_ROSTER_UPDATE")
 ev:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 ev:RegisterEvent("PLAYER_ENTERING_WORLD")
 ev:RegisterEvent("PLAYER_REGEN_ENABLED")
-ev:SetScript("OnEvent", function(ev)
-    if ev == "PLAYER_REGEN_ENABLED" and RSF.pendingUpdate then
+ev:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_REGEN_ENABLED" and RSF.pendingUpdate then
         lastPlayerCount = -1
         lastEnemyType = ""
     end
